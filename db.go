@@ -12,7 +12,7 @@ type Impl struct {
 
 func (i *Impl) InitDB() {
 	var err error
-	connStr := "postgres://postgres:123quatro@localhost/goeco?sslmode=disable"
+	connStr := "postgres://username:password@host/db?sslmode=disable"
 	i.DB, err = gorm.Open("postgres", connStr)
 	if err != nil {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
