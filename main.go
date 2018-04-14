@@ -1,29 +1,30 @@
 package main
 
 import (
+	_ "github.com/lib/pq"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/gorilla/mux"
 	"log"
-	"fmt"
+	"net/http"
 )
 
-func main(){
-	var db = getDB()
-	rows, err := db.Query("SELECT nome FROM usuario")
+func main() {
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	i := Impl{}
+	i.InitDB()
+	i.InitSchema()
+	i.Seed()
 
-	defer rows.Close()
-	for rows.Next() {
-		var nome string
-		if err := rows.Scan(&nome); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Print("Users:")
-		fmt.Println("Name: ", nome)
-	}
-	if err := rows.Err(); err != nil {
-		log.Fatal(err)
-	}
+
+	router := mux.NewRouter()
+	router.HandleFunc("/usuario", i.GetAllUsuario).Methods("GET")
+	router.HandleFunc("/cadastro", i.PostCadastro).Methods("POST")
+	router.HandleFunc("/usuario/{id}", i.GetUsuario).Methods("GET")
+	router.HandleFunc("/usuario/{id}", i.DeleteUsuario).Methods("DELETE")
+	log.Fatal(http.ListenAndServe(":3000", router))
 }
+
+
+
+
 
